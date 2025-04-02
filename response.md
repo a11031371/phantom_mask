@@ -3,11 +3,11 @@
 ### A.1. Requirement Completion Rate
 - [X] Design database schema.
   - Tables are designed as follows:
-  `pharmacies`: Stores pharmacy details including opening hours (days X opening/closing time).
-  `masks`: Stores mask information (model + color + # of packs).
-  `pharmacy_masks`: Links masks to pharmacies with price. Extesible for other dependent attributes (e.g., ads) in the futue.
-  `users`: Stores user information.
-  `transactions`: Stores user transaction records.
+  `pharmacies`: Stores pharmacy details including opening hours (days X opening/closing time).  
+  `masks`: Stores mask information (model + color + # of packs).  
+  `pharmacy_masks`: Links masks to pharmacies with price. Extesible for other dependent attributes (e.g., ads) in the futue.  
+  `users`: Stores user information.  
+  `transactions`: Stores user transaction records.  
 
 - [x] Complete ETL scripts to import given json data to sqlite database.
   - Implemented at pharmacies_etl_script.py and users_etl_script.py.
