@@ -1,16 +1,26 @@
 # Response
-> The Current content is an **example template**; please edit it to fit your style and content.
 ## A. Required Information
 ### A.1. Requirement Completion Rate
-- [x] List all pharmacies open at a specific time and on a day of the week if requested.
+- [X] Design database schema.
+  - Tables are designed as follows:
+  `pharmacies`: Stores pharmacy details including opening hours (days X opening/closing time).
+  `masks`: Stores mask information (model + color + # of packs).
+  `pharmacy_masks`: Links masks to pharmacies with price. Extesible for other dependent attributes (e.g., ads) in the futue.
+  `users`: Stores user information.
+  `transactions`: Stores user transaction records.
+
+- [x] Complete ETL scripts to import given json data to sqlite database.
+  - Implemented at pharmacies_etl_script.py and users_etl_script.py.
+
+- [ ] List all pharmacies open at a specific time and on a day of the week if requested.
   - Implemented at xxx API.
-- [x] List all masks sold by a given pharmacy, sorted by mask name or price.
+- [ ] List all masks sold by a given pharmacy, sorted by mask name or price.
   - Implemented at xxx API.
-- [x] List all pharmacies with more or less than x mask products within a price range.
+- [ ] List all pharmacies with more or less than x mask products within a price range.
   - Implemented at xxx API.
-- [x] The top x users by total transaction amount of masks within a date range.
+- [ ] The top x users by total transaction amount of masks within a date range.
   - Implemented at xxx API.
-- [x] The total number of masks and dollar value of transactions within a date range.
+- [ ] The total number of masks and dollar value of transactions within a date range.
   - Implemented at xxx API.
 - [x] Search for pharmacies or masks by name, ranked by relevance to the search term.
   - Implemented at xxx API.
@@ -21,12 +31,19 @@
 
 Import [this](#api-document) json file to Postman.
 
-### A.3. Import Data Commands
-Please run these two script commands to migrate the data into the database.
+### A.3. Build Tables Commands
+Please run the script command to setup tables for the database (phantom_mask_db.sqlite3).
 
 ```bash
-$ rake import_data:pharmacies[PATH_TO_FILE]
-$ rake import_data:users[PATH_TO_FILE]
+$ python [PATH_TO_FILE]/db_setup.py
+```
+
+### A.4. Import Data Commands
+Please run the following script commands to migrate the data into the database (phantom_mask_db.sqlite3).
+
+```bash
+$ python [PATH_TO_FILE]/pharmacies_etl_script.py
+$ python [PATH_TO_FILE]/users_etl_script.py
 ```
 ## B. Bonus Information
 
@@ -42,7 +59,7 @@ bundle exec rspec spec
 ```
 
 ### B.2. Dockerized
-Please check my Dockerfile / docker-compose.yml at [here](#dockerized).
+Please check my Dockerfile / docker-compose.yml at [here](https://github.com/a11031371/phantom_mask/blob/master/Dockerfile).
 
 On the local machine, please follow the commands below to build it.
 
