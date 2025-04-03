@@ -22,6 +22,13 @@ class PharmacyMasksSerializer(serializers.ModelSerializer):
         model = PharmacyMasks
         fields = ['pharmacy_name', 'mask_name', 'model', 'color', 'num_per_pack', 'price']
 
+class PharmaciesMaskCountSerializer(serializers.ModelSerializer):
+    mask_count = serializers.IntegerField()
+
+    class Meta:
+        model = Pharmacies
+        fields = ["name", "mask_count"]
+
 class TransactionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transactions

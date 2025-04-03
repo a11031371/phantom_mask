@@ -33,8 +33,8 @@ class Pharmacies(models.Model):
 
 
 class PharmacyMasks(models.Model):
-    mask = models.ForeignKey(Masks, models.DO_NOTHING)
-    pharmacy = models.ForeignKey(Pharmacies, models.DO_NOTHING)
+    mask = models.ForeignKey(Masks, related_name="pharmacy_masks", on_delete=models.PROTECT)
+    pharmacy = models.ForeignKey(Pharmacies, related_name="pharmacy_masks", on_delete=models.PROTECT)
     price = models.FloatField()
 
     class Meta:
@@ -43,9 +43,9 @@ class PharmacyMasks(models.Model):
 
 
 class Transactions(models.Model):
-    user = models.ForeignKey('Users', models.DO_NOTHING)
-    pharmacy = models.ForeignKey(Pharmacies, models.DO_NOTHING)
-    mask = models.ForeignKey(Masks, models.DO_NOTHING)
+    user = models.ForeignKey('Users', related_name="transactions", on_delete=models.PROTECT)
+    pharmacy = models.ForeignKey(Pharmacies, related_name="transactions", on_delete=models.PROTECT)
+    mask = models.ForeignKey(Masks, related_name="transactions", on_delete=models.PROTECT)
     transaction_amount = models.FloatField()
     transaction_date = models.TextField()
 
