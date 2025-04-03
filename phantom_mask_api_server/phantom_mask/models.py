@@ -3,6 +3,7 @@ class Masks(models.Model):
     model = models.TextField()
     color = models.TextField()
     num_per_pack = models.IntegerField()
+    name = models.TextField(unique=True)
 
     class Meta:
         managed = False

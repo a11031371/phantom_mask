@@ -17,22 +17,22 @@
 - [x] Complete task: List all pharmacies open at a specific time and on a day of the week if requested.
   - Implemented at OpenPharmaciesListCreate API.
   - Tested and documented.
-- [ ] Complete task: List all masks sold by a given pharmacy, sorted by mask name or price.
+- [x] Complete task: List all masks sold by a given pharmacy, sorted by mask name or price.
+  - Implemented at PharmacyMasksListCreate API.
+  - Tested and documented.
+- [ ] Complete task: List all pharmacies with more or less than x mask products within a price range.
   - Implemented at xxx API.
   - Tested and documented.
-- [ ] List all pharmacies with more or less than x mask products within a price range.
+- [ ] Complete task: The top x users by total transaction amount of masks within a date range.
   - Implemented at xxx API.
   - Tested and documented.
-- [ ] The top x users by total transaction amount of masks within a date range.
+- [ ] Complete task: The total number of masks and dollar value of transactions within a date range.
   - Implemented at xxx API.
   - Tested and documented.
-- [ ] The total number of masks and dollar value of transactions within a date range.
+- [ ] Complete task: Search for pharmacies or masks by name, ranked by relevance to the search term.
   - Implemented at xxx API.
   - Tested and documented.
-- [ ] Search for pharmacies or masks by name, ranked by relevance to the search term.
-  - Implemented at xxx API.
-  - Tested and documented.
-- [ ] Process a user purchases a mask from a pharmacy, and handle all relevant data changes in an atomic transaction.
+- [ ] Complete task: Process a user purchases a mask from a pharmacy, and handle all relevant data changes in an atomic transaction.
   - Implemented at xxx API.
   - Tested and documented.
 ### A.2. API Document

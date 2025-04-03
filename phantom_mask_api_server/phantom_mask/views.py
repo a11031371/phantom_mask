@@ -2,11 +2,13 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import Pharmacies, Masks, PharmacyMasks, Transactions, Users
 from django.db.models import Q, F
-from .serializers import PharmaciesNameSerializer
+from .serializers import PharmaciesNameSerializer, PharmacyMasksSerializer
 from rest_framework.exceptions import ValidationError
 from datetime import datetime
 
 class OpenPharmaciesListCreate(generics.ListCreateAPIView):
+    """ List all pharmacies that are open at a given time on a given day. """
+
     serializer_class = PharmaciesNameSerializer
     def get_queryset(self):
         queryset = Pharmacies.objects.all()
@@ -44,3 +46,29 @@ class OpenPharmaciesListCreate(generics.ListCreateAPIView):
             raise ValidationError({"error": "Please provide both day and time parameters."})
         
         return queryset.filter(standard_case | cross_day_case)
+    
+class PharmacyMasksListCreate(generics.ListCreateAPIView):
+    """ List all masks sold by a given pharmacy, sorted by mask name or price."""
+    serializer_class = PharmacyMasksSerializer
+
+    def get_queryset(self):
+        queryset = PharmacyMasks.objects.all()
+
+        # Get query parameters
+        pharmacy_name = self.request.query_params.get("pharmacy")
+        sort_by = self.request.query_params.get("sort_by")
+        pharmacy_id = Pharmacies.objects.filter(name=pharmacy_name).values_list('id', flat=True).first()
+        if pharmacy_id:
+            queryset = queryset.filter(pharmacy_id=pharmacy_id)
+        else:
+            raise ValidationError({"error": "Pharmacy not found."})
+        
+        if sort_by:
+            if sort_by == "name":
+                queryset = queryset.order_by("mask__name")
+            elif sort_by == "price":
+                queryset = queryset.order_by("price")
+            else:
+                raise ValidationError({"error": "Invalid sort_by parameter. Use 'name' or 'price'."})
+
+        return queryset

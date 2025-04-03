@@ -2,10 +2,7 @@ import json
 import sqlite3
 import re
 
-"""
-ETL script to extract, transform and load user data from JSON file into SQLite database
-
-"""
+""" ETL script to extract, transform and load user data from JSON file into SQLite database """
 
 # read json data
 with open("../data/users.json", "r", encoding="utf-8") as f:

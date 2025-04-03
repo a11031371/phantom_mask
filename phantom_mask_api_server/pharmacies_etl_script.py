@@ -2,10 +2,7 @@ import json
 import sqlite3
 import re
 
-"""
-ETL script to extract, transform and load pharmacy data from JSON file into SQLite database
-
-"""
+""" ETL script to extract, transform and load pharmacy data from JSON file into SQLite database """
 
 # read json data
 with open("../data/pharmacies.json", "r", encoding="utf-8") as f:
@@ -16,7 +13,7 @@ conn = sqlite3.connect("phantom_mask_db.db")
 cursor = conn.cursor()
 
 def parse_opening_hours(opening_hours):
-    """Parses an opening hours string and converts it into a structured format
+    """ Parses an opening hours string and converts it into a structured format
 
     Args:
         opening_hours (str): A string representing the opening hours
@@ -55,7 +52,7 @@ def parse_opening_hours(opening_hours):
 
 
 def parse_mask_name(mask_name):
-    """Parses a mask name string and extracts model, color and num_per_pack
+    """ Parses a mask name string and extracts model, color and num_per_pack
 
     Args:
         mask_name (str): A string representing the mask name (e.g. "MaskT (green) (10 per pack)")
@@ -94,9 +91,9 @@ def insert_masks_data():
         for mask in pharmacy["masks"]:
             model, color, num_per_pack = parse_mask_name(mask["name"])
             cursor.execute("""
-                INSERT OR IGNORE INTO masks (model, color, num_per_pack)
-                VALUES (?, ?, ?)
-            """, (model, color, num_per_pack))
+                INSERT OR IGNORE INTO masks (model, color, num_per_pack, name)
+                VALUES (?, ?, ?, ?)
+            """, (model, color, num_per_pack, mask["name"]))
 
 def insert_pharmacy_masks_data():
     for pharmacy in pharmacies_data:
@@ -115,10 +112,9 @@ def insert_pharmacy_masks_data():
                 INSERT INTO pharmacy_masks (mask_id, pharmacy_id, price)
                 VALUES (?, ?, ?) """, (mask_id, pharmacy_id, price)
             )
-
-insert_pharmacy_data()
+# insert_pharmacy_data()
 insert_masks_data()
-insert_pharmacy_masks_data()
+# insert_pharmacy_masks_data()
 conn.commit()
 conn.close()
 

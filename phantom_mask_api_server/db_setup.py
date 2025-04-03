@@ -1,11 +1,12 @@
 import sqlite3
 
 # SQLite connection 
-conn = sqlite3.connect("phantom_mask_db.sqlite3")
+conn = sqlite3.connect("phantom_mask_db.db")
 cursor = conn.cursor()
 
 # create tables (users, pharmacies, masks, transactions, pharmacy_masks)
 cursor.executescript("""
+DROP TABLE IF EXISTS masks;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -30,7 +31,8 @@ CREATE TABLE IF NOT EXISTS masks (
     model TEXT NOT NULL,
     color TEXT NOT NULL,
     num_per_pack INTEGER NOT NULL,
-    UNIQUE (model, color, num_per_pack)
+    name TEXT NOT NULL,
+    UNIQUE (name)
 );
                      
 CREATE TABLE IF NOT EXISTS transactions (
