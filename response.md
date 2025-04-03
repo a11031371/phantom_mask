@@ -2,7 +2,7 @@
 ## A. Required Information
 ### A.1. Requirement Completion Rate
 - [X] Design database schema.
-  - Tables are designed as follows:
+  - Tables are designed as follows:  
   `pharmacies`: Stores pharmacy details including opening hours (days X opening/closing time).  
   `masks`: Stores mask information (model + color + # of packs).  
   `pharmacy_masks`: Links masks to pharmacies with price. Extesible for other dependent attributes (e.g., ads) in the futue.  
