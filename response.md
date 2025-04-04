@@ -24,7 +24,7 @@
   - Implemented at PharmaciesMaskCompareListView API.
   - Tested and documented.
 - [x] Complete task: The top x users by total transaction amount of masks within a date range.
-  - Implemented at FrequentTransactionsUserListView API.
+  - Implemented at ActiveTransactionsUserListView API.
   - Tested and documented.
 - [x] Complete task: The total number of masks and dollar value of transactions within a date range.
   - Implemented at MaskTransactionsListView API.

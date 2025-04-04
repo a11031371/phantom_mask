@@ -127,7 +127,7 @@ class PharmaciesCompareMaskListView(generics.ListAPIView):
 
         return queryset
 
-class FrequentTransactionsUserListView(generics.ListAPIView):
+class ActiveTransactionsUserListView(generics.ListAPIView):
     """ List the top x users by total transaction amount of masks within a date range."""
     
     serializer_class = serializers.TransactionsUserSerializer
