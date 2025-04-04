@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, views
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from .models import Pharmacies, Masks, PharmacyMasks, Transactions, Users
@@ -8,6 +8,7 @@ from django.db.models.functions import Round
 from . import serializers
 from datetime import datetime
 import re
+from .utils.StringRelevance import StringRelevance as sr
 
 class PharmacyOpenListView(generics.ListAPIView):
     """ List all pharmacies that are open at a given time on a given day. """
@@ -22,7 +23,7 @@ class PharmacyOpenListView(generics.ListAPIView):
         """
         queryset = Pharmacies.objects.all()
         
-        # Get query parameters
+        # get query parameters
         day = self.request.query_params.get("day")
         time = self.request.query_params.get("time")
 
@@ -68,7 +69,7 @@ class PharmacyMasksListView(generics.ListAPIView):
         """
         queryset = PharmacyMasks.objects.all()
 
-        # Get query parameters
+        # get query parameters
         pharmacy_name = self.request.query_params.get("pharmacy")
         sort_by = self.request.query_params.get("sort_by")
         pharmacy_id = Pharmacies.objects.filter(name=pharmacy_name).values_list('id', flat=True).first()
@@ -100,7 +101,7 @@ class PharmaciesCompareMaskListView(generics.ListAPIView):
             cond: comparison operator + number (e.g., 'gt5', 'lt10').
         """
 
-        # Get query parameters
+        # get query parameters
         min_price = self.request.query_params.get("min")
         max_price = self.request.query_params.get("max")
         cond = self.request.query_params.get("cond")
@@ -139,7 +140,7 @@ class ActiveTransactionsUserListView(generics.ListAPIView):
             end: end date (YYYY-MM-DD).
             x: number of users to return.
         """
-        # Get query parameters
+        # get query parameters
         start_date = self.request.query_params.get("start")
         end_date = self.request.query_params.get("end")
         x = self.request.query_params.get("x")
@@ -189,7 +190,7 @@ class MaskTransactionsListView(generics.ListAPIView):
             start: start date (YYYY-MM-DD).
             end: end date (YYYY-MM-DD).
         """
-        # Get query parameters
+        # get query parameters
         start_date = self.request.query_params.get("start")
         end_date = self.request.query_params.get("end")
 
@@ -218,5 +219,61 @@ class MaskTransactionsListView(generics.ListAPIView):
         )
 
         return [queryset]
+    
+class SearchView(views.APIView):
+    """ Search for pharmacies or masks by name, ranked by relevance to the search term. """
 
+    # define the search models
+    search_models = {
+        "pharmacy": {
+            "model": Pharmacies,
+            "serializer": serializers.PharmaciesNameSerializer,
+            "compared_field": "name"
+        },
+        "mask": {
+            "model": Masks,
+            "serializer": serializers.MasksNameSerializer,
+            "compared_field": "model"
+        }
+    }
+
+    def get(self, request):
+        """
+        query parameters:
+            type: type of search (pharmacy or mask).
+            q: search term.
+        """
+        search_type = request.query_params.get("type")
+        search_term = request.query_params.get("q")
+
+        search_term = search_term.strip().lower() if search_term else ""
         
+
+        # validate search type
+        if search_type not in self.search_models:
+            return Response({"error": "Invalid search type. Use 'pharmacy' or 'mask'."})
+
+        # calculate relevance for each object in the model
+        results = []
+        for obj in self.search_models[search_type]["model"].objects.all():
+            # get the compared field value
+            compared_field_value = getattr(obj, self.search_models[search_type]["compared_field"])
+            # calculate relevance using StringRelevance class
+            relevance = sr(search_term, compared_field_value).get_relevance()
+            # append the result to the list if not existing
+            results.append({
+                "name": compared_field_value,
+                "relevance": relevance
+            })
+
+        # distinct results
+        results = {result["name"]: result for result in results}.values()
+        
+
+        # sort results by relevance
+        results = sorted(results, key=lambda x: x["relevance"])
+
+        serializer_class = self.search_models[search_type]["serializer"]
+        serializer = serializer_class(results, many=True)
+    
+        return Response(serializer.data)

@@ -6,6 +6,16 @@ class PharmaciesNameSerializer(serializers.ModelSerializer):
         model = Pharmacies
         fields = ['name']
 
+class MasksNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Masks
+        fields = ['name']
+
+class UsersNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = ['name']
+
 class PharmacyMasksSerializer(serializers.ModelSerializer):
     model = serializers.CharField(source='mask.model', read_only=True)
     color = serializers.CharField(source='mask.color', read_only=True)
@@ -39,12 +49,14 @@ class TransactionsAmountSerializer(serializers.ModelSerializer):
         model = Transactions
         fields = ["total_transaction_amount", "total_mask_product_count", "total_mask_count"]
 
-class UsersSerializer(serializers.ModelSerializer):
+class PharmaciesNameRelevanceSerializer(serializers.ModelSerializer):
+    relevance = serializers.FloatField()
     class Meta:
-        model = Users
-        fields = '__all__'
+        model = Pharmacies
+        fields = ['name', 'relevance']
 
-class MaskSerializer(serializers.ModelSerializer):
+class MasksNameRelevanceSerializer(serializers.ModelSerializer):
+    relevance = serializers.FloatField()
     class Meta:
         model = Masks
-        fields = '__all__'
+        fields = ['name', 'relevance']
