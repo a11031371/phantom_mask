@@ -47,7 +47,7 @@ class Transactions(models.Model):
     pharmacy = models.ForeignKey(Pharmacies, related_name="transactions", on_delete=models.PROTECT)
     mask = models.ForeignKey(Masks, related_name="transactions", on_delete=models.PROTECT)
     transaction_amount = models.FloatField()
-    transaction_date = models.TextField()
+    transaction_date = models.DateTimeField()
 
     class Meta:
         managed = False

@@ -15,19 +15,19 @@
 - [x] Build ORM models in django and finish migration.
 
 - [x] Complete task: List all pharmacies open at a specific time and on a day of the week if requested.
-  - Implemented at OpenPharmaciesListCreate API.
+  - Implemented at OpenPharmaciesListView API.
   - Tested and documented.
 - [x] Complete task: List all masks sold by a given pharmacy, sorted by mask name or price.
-  - Implemented at PharmacyMasksListCreate API.
+  - Implemented at PharmacyMasksListView API.
   - Tested and documented.
-- [ ] Complete task: List all pharmacies with more or less than x mask products within a price range.
-  - Implemented at xxx API.
+- [x] Complete task: List all pharmacies with more or less than x mask products within a price range.
+  - Implemented at PharmaciesMaskCompareListView API.
   - Tested and documented.
-- [ ] Complete task: The top x users by total transaction amount of masks within a date range.
-  - Implemented at xxx API.
+- [x] Complete task: The top x users by total transaction amount of masks within a date range.
+  - Implemented at FrequentTransactionsUserListView API.
   - Tested and documented.
-- [ ] Complete task: The total number of masks and dollar value of transactions within a date range.
-  - Implemented at xxx API.
+- [x] Complete task: The total number of masks and dollar value of transactions within a date range.
+  - Implemented at MaskTransactionsListView API.
   - Tested and documented.
 - [ ] Complete task: Search for pharmacies or masks by name, ranked by relevance to the search term.
   - Implemented at xxx API.

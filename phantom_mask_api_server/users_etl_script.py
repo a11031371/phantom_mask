@@ -1,6 +1,7 @@
 import json
 import sqlite3
 import re
+from datetime import datetime
 
 """ ETL script to extract, transform and load user data from JSON file into SQLite database """
 
@@ -62,11 +63,13 @@ def insert_data():
             else:
                 mask_id = mask_result[0]
 
+            transaction_date = datetime.strptime(transaction["transactionDate"], "%Y-%m-%d %H:%M:%S")
+
             # insert transaction
             cursor.execute("""
                 INSERT INTO transactions (user_id, pharmacy_id, mask_id, transaction_amount, transaction_date)
                 VALUES (?, ?, ?, ?, ?)
-            """, (user_id, pharmacy_id, mask_id, transaction["transactionAmount"], transaction["transactionDate"]))
+            """, (user_id, pharmacy_id, mask_id, transaction["transactionAmount"], transaction_date))
 
 insert_data()
 conn.commit()

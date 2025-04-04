@@ -6,7 +6,6 @@ cursor = conn.cursor()
 
 # create tables (users, pharmacies, masks, transactions, pharmacy_masks)
 cursor.executescript("""
-DROP TABLE IF EXISTS masks;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -41,7 +40,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     pharmacy_id INTEGER NOT NULL,
     mask_id INTEGER NOT NULL,
     transaction_amount REAL NOT NULL,
-    transaction_date TEXT NOT NULL,
+    transaction_date DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (pharmacy_id) REFERENCES pharmacies(id),
     FOREIGN KEY (mask_id) REFERENCES masks(id)

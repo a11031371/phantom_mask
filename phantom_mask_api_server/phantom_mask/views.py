@@ -1,17 +1,25 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Pharmacies, Masks, PharmacyMasks, Transactions, Users
-from django.db.models import Q, F, Count
-from . import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from .models import Pharmacies, Masks, PharmacyMasks, Transactions, Users
+from django.db.models import Q, F, Count, Sum
+from django.db.models.functions import Round
+from . import serializers
 from datetime import datetime
 import re
 
-class PharmacyOpenListCreate(generics.ListCreateAPIView):
+class PharmacyOpenListView(generics.ListAPIView):
     """ List all pharmacies that are open at a given time on a given day. """
 
     serializer_class = serializers.PharmaciesNameSerializer
+    
     def get_queryset(self):
+        """
+        query parameters:
+            day: day of the week (mon, tue, wed, thu, fri, sat, sun).
+            time: time in HH:MM (24-hour format).
+        """
         queryset = Pharmacies.objects.all()
         
         # Get query parameters
@@ -48,11 +56,16 @@ class PharmacyOpenListCreate(generics.ListCreateAPIView):
         
         return queryset.filter(standard_case | cross_day_case)
     
-class PharmacyMasksListCreate(generics.ListCreateAPIView):
+class PharmacyMasksListView(generics.ListAPIView):
     """ List all masks sold by a given pharmacy, sorted by mask name or price."""
     serializer_class = serializers.PharmacyMasksSerializer
 
     def get_queryset(self):
+        """
+        query parameters:
+            pharmacy: name of the pharmacy.
+            sort_by: 'name' or 'price'.
+        """
         queryset = PharmacyMasks.objects.all()
 
         # Get query parameters
@@ -74,7 +87,7 @@ class PharmacyMasksListCreate(generics.ListCreateAPIView):
 
         return queryset
     
-class PharmaciesMaskCompareListCreate(generics.ListCreateAPIView):
+class PharmaciesCompareMaskListView(generics.ListAPIView):
     """ List all pharmacies with more or less than x mask products within a price range."""
 
     serializer_class = serializers.PharmaciesMaskCountSerializer
@@ -96,13 +109,15 @@ class PharmaciesMaskCompareListCreate(generics.ListCreateAPIView):
         min_price = float(min_price) if min_price else 0.0
         max_price = float(max_price) if max_price else float("inf")
 
-        queryset = Pharmacies.objects.filter(
+        # query the number of masks in the price range
+        queryset = Pharmacies.objects.filter( # filter by price range
             pharmacy_masks__price__gte=min_price,
             pharmacy_masks__price__lte=max_price
-        ).annotate(
+        ).annotate( # join with pharmacy_masks table
             mask_count=Count("pharmacy_masks__mask", distinct=True)
         ).all()
 
+        # filter by condition
         if comp and x:
             if comp in ["gt", "lt", "gte", "lte"]:
                 filter_arg = f"mask_count__{comp}"
@@ -112,5 +127,96 @@ class PharmaciesMaskCompareListCreate(generics.ListCreateAPIView):
 
         return queryset
 
+class FrequentTransactionsUserListView(generics.ListAPIView):
+    """ List the top x users by total transaction amount of masks within a date range."""
+    
+    serializer_class = serializers.TransactionsUserSerializer
+    
+    def get_queryset(self):
+        """
+        query parameters:
+            start: start date (YYYY-MM-DD).
+            end: end date (YYYY-MM-DD).
+            x: number of users to return.
+        """
+        # Get query parameters
+        start_date = self.request.query_params.get("start")
+        end_date = self.request.query_params.get("end")
+        x = self.request.query_params.get("x")
+
+        # validate date format and range
+        if start_date and end_date:
+            try:
+                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+                end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            except ValueError:
+                raise ValidationError({"error": "Invalid date format. Please use YYYY-MM-DD."})
+            
+            if start_date > end_date:
+                raise ValidationError({"error": "Start date must be before end date."})
+        
+        else:
+            raise ValidationError({"error": "Please provide both start and end dates."})
+
+        # Get the top x users by total transaction amount within the date range
+        queryset = Users.objects.filter( # filter by date range
+            transactions__transaction_date__date__gte=start_date,
+            transactions__transaction_date__date__lte=end_date
+        ).annotate( # join with transactions table
+            total_transaction_amount=Round(Sum("transactions__transaction_amount"), 2)  
+        ).order_by( # descending order
+            "-total_transaction_amount"
+        ) 
+        
+        # limit the number of users returned
+        if x:
+            try:
+                x = int(x)
+                queryset = queryset[:x]
+            except ValueError:
+                raise ValidationError({"error": "Invalid value for x. Please provide an non-negative integer."})
+
+        return queryset
+    
+class MaskTransactionsListView(generics.ListAPIView):
+    """ Find the total number of masks and dollar value of transactions within a date range."""
+        
+    serializer_class = serializers.TransactionsAmountSerializer
+    
+    def get_queryset(self):
+        """
+        query parameters:
+            start: start date (YYYY-MM-DD).
+            end: end date (YYYY-MM-DD).
+        """
+        # Get query parameters
+        start_date = self.request.query_params.get("start")
+        end_date = self.request.query_params.get("end")
+
+        filters = {}
+
+        # validate start_date
+        if start_date:
+            try:
+                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+                filters["transaction_date__date__gte"] = start_date
+            except ValueError:
+                raise ValidationError({"error": "Invalid start date format. Use YYYY-MM-DD."})
+
+        # validate end_date
+        if end_date:
+            try:
+                end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+                filters["transaction_date__date__lte"] = end_date
+            except ValueError:
+                raise ValidationError({"error": "Invalid end date format. Use YYYY-MM-DD."})
+
+        queryset = Transactions.objects.filter(**filters).aggregate(
+            total_transaction_amount=Round(Sum("transaction_amount"), 2),
+            total_mask_product_count=Count("id"),
+            total_mask_count=Sum("mask__num_per_pack")
+        )
+
+        return [queryset]
 
         
