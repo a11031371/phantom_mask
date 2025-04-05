@@ -5,7 +5,7 @@ import re
 """ ETL script to extract, transform and load pharmacy data from JSON file into SQLite database """
 
 # read json data
-with open("../data/pharmacies.json", "r", encoding="utf-8") as f:
+with open("./data/pharmacies.json", "r", encoding="utf-8") as f:
     pharmacies_data = json.load(f)
 
 # SQLite connection

@@ -6,7 +6,7 @@ from datetime import datetime
 """ ETL script to extract, transform and load user data from JSON file into SQLite database """
 
 # read json data
-with open("../data/users.json", "r", encoding="utf-8") as f:
+with open("./data/users.json", "r", encoding="utf-8") as f:
     users_data = json.load(f)
 
 # SQLite connection
