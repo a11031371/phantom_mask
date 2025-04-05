@@ -60,3 +60,9 @@ class MasksNameRelevanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Masks
         fields = ['name', 'relevance']
+
+class PurchaseMasksSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    pharmacy_id = serializers.IntegerField()
+    mask_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)

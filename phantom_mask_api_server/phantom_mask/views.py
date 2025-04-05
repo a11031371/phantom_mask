@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from .models import Pharmacies, Masks, PharmacyMasks, Transactions, Users
 from django.db.models import Q, F, Count, Sum
 from django.db.models.functions import Round
+from django.db import transaction
 from . import serializers
 from datetime import datetime
+from django.utils.timezone import now
 import re
 from .utils.StringRelevance import StringRelevance as sr
 
@@ -89,7 +91,7 @@ class PharmacyMasksListView(generics.ListAPIView):
         return queryset
     
 class PharmaciesCompareMaskListView(generics.ListAPIView):
-    """ List all pharmacies with more or less than x mask products within a price range."""
+    """ List all pharmacies with more or less than x mask products within a price range. """
 
     serializer_class = serializers.PharmaciesMaskCountSerializer
 
@@ -129,7 +131,7 @@ class PharmaciesCompareMaskListView(generics.ListAPIView):
         return queryset
 
 class ActiveTransactionsUserListView(generics.ListAPIView):
-    """ List the top x users by total transaction amount of masks within a date range."""
+    """ List the top x users by total transaction amount of masks within a date range. """
     
     serializer_class = serializers.TransactionsUserSerializer
     
@@ -180,7 +182,7 @@ class ActiveTransactionsUserListView(generics.ListAPIView):
         return queryset
     
 class MaskTransactionsListView(generics.ListAPIView):
-    """ Find the total number of masks and dollar value of transactions within a date range."""
+    """ Find the total number of masks and dollar value of transactions within a date range. """
         
     serializer_class = serializers.TransactionsAmountSerializer
     
@@ -277,3 +279,120 @@ class SearchView(views.APIView):
         serializer = serializer_class(results, many=True)
     
         return Response(serializer.data)
+
+class PurchaseMaskView(views.APIView):
+    """ Purchase a mask from a pharmacy. """
+    
+    def post(self, request):
+        serializer = serializers.PurchaseMasksSerializer(data=request.data)
+        if not serializer.is_valid():
+            raise ValidationError(serializer.errors)
+
+        data = serializer.validated_data
+
+        try:
+            with transaction.atomic():
+                # get the pharmacy, mask, and user objects
+                pharmacy = Pharmacies.objects.get(id=data["pharmacy_id"])
+                mask = Masks.objects.get(id=data["mask_id"])
+                user = Users.objects.get(id=data["user_id"])
+                pharmacy_mask = PharmacyMasks.objects.get(pharmacy=pharmacy, mask=mask)
+
+                # calculate total cost
+                total_cost = round(pharmacy_mask.price * data["quantity"], 2)
+
+                # check if the cash balance of the user is enough
+                if user.cash_balance < total_cost:
+                    raise ValidationError({"error": "User does not have enough balance."})
+
+                # update the cash balance of the user and pharmacy
+                user.cash_balance -= total_cost
+                pharmacy.cash_balance += total_cost
+                user.save()
+                pharmacy.save()
+
+                # create a transaction record
+                Transactions.objects.create(
+                    user=user,
+                    pharmacy=pharmacy,
+                    mask=mask,
+                    transaction_amount=total_cost,
+                    transaction_date=now().replace(microsecond=0)
+                )
+
+                # return the response
+                return Response({
+                    "message": "Thank you! Have a nice day!",
+                    "user": user.name,
+                    "pharmacy": pharmacy.name,
+                    "mask": mask.name,
+                    "quantity": data["quantity"],
+                    "total_cost": total_cost,
+                    "transaction_date": now().replace(microsecond=0)
+                })
+            
+        # handle exceptions
+        except Pharmacies.DoesNotExist:
+            return Response({"error": "Pharmacy not found."}, status=404)
+        except Masks.DoesNotExist:
+            return Response({"error": "Mask not found."}, status=404)
+        except Users.DoesNotExist:
+            return Response({"error": "User not found."}, status=404)
+        except PharmacyMasks.DoesNotExist:
+            return Response({"error": "Pharmacy does not sell this mask."}, status=400)
+        except ValidationError as e:
+            return Response(e.detail, status=400)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()  # Print the stack trace for debugging
+            return Response({"error": str(e)}, status=500)
+
+class CancelLatestTransactionView(views.APIView):
+    """ 
+    Cancel the latest transaction. 
+    (Simply delete a record. Needs to be refactored in a more robust way for production.)
+    """
+
+    def post(self, request):
+        """
+        API to cancel the latest transaction.
+        It will revert the transaction and restore user and pharmacy balance.
+        """
+        try:
+            # get the latest transaction
+            latest_transaction = Transactions.objects.order_by('-transaction_date').first()
+
+            if not latest_transaction:
+                raise ValidationError("No transactions found.")
+
+            # Ensure this is a valid transaction for cancellation (e.g., not already cancelled)
+
+            user = latest_transaction.user
+            pharmacy = latest_transaction.pharmacy
+            mask = latest_transaction.mask
+            total_cost = latest_transaction.transaction_amount
+
+            with transaction.atomic():
+                # Revert user balance
+                user.cash_balance += total_cost
+                user.save()
+
+                # Revert pharmacy balance
+                pharmacy.cash_balance -= total_cost
+                pharmacy.save()
+
+                # Delete the transaction record
+                latest_transaction.delete()
+
+            # Return the success response with details
+            response_data = {
+                "message": "The latest transaction has been successfully canceled.",
+                "user": user.name,
+                "pharmacy": pharmacy.name,
+                "mask": mask.name,
+                "transaction_amount": total_cost,
+            }
+            return Response(response_data, status=200)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
