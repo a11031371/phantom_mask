@@ -65,36 +65,23 @@ $ python [PATH_TO_FILE]/pharmacies_etl_script.py
 $ python [PATH_TO_FILE]/users_etl_script.py
 ```
 ## B. Bonus Information
-
->  If you completed the bonus requirements, please fill in your task below.
 ### B.1. Test Coverage Report
 
-I wrote down the 20 unit tests for the APIs I built. Please check the test coverage report at [here](#test-coverage-report).
-
-You can run the test script by using the command below:
-
-```bash
-bundle exec rspec spec
-```
+> todo
 
 ### B.2. Dockerized
-Please check my Dockerfile / docker-compose.yml at [here](https://github.com/a11031371/phantom_mask/blob/master/Dockerfile).
+Please check my Dockerfile at [here](https://github.com/a11031371/phantom_mask/blob/master/phantom_mask_api_server/Dockerfile) and docker-compose.yml at [here](https://github.com/a11031371/phantom_mask/blob/master/compose.yaml).
 
 On the local machine, please follow the commands below to build it.
 
 ```bash
-$ docker build --build-arg ENV=development -p 80:3000 -t my-project:1.0.0 .  
+$ docker-compose build  
 $ docker-compose up -d
-
-# go inside the container, run the migrate data command.
-$ docker exec -it my-project bash
-$ rake import_data:pharmacies[PATH_TO_FILE] 
-$ rake import_data:user[PATH_TO_FILE]
 ```
 
 ### B.3. Demo Site Url
 
-The demo site is ready on [my AWS demo site](#demo-site-url); you can try any APIs on this demo site.
+> todo
 
 ## C. Other Information
 
@@ -104,6 +91,6 @@ My ERD [erd-link](#erd-link).
 
 ### C.2. Technical Document
 
-For frontend programmer reading, please check this [technical document](technical-document) to know how to operate those APIs.
+For frontend programmer reading, please check this [technical document](https://hackmd.io/@LLH/Bk9rZVFaJg) to know how to operate those APIs.
 
 - --
