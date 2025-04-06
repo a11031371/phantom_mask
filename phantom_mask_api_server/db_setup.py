@@ -1,7 +1,13 @@
 import sqlite3
+import os
+
+# Create a folder for the database if it doesn't exist
+folder_name = "./db"
+if not os.path.exists(folder_name):
+    os.makedirs(folder_name)
 
 # SQLite connection 
-conn = sqlite3.connect("phantom_mask_db.db")
+conn = sqlite3.connect(f"{folder_name}/phantom_mask_db.db")
 cursor = conn.cursor()
 
 
