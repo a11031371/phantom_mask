@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'phantom_mask_api_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'phantom_mask_db.db',
+        'NAME': BASE_DIR / 'db' / 'phantom_mask_db.db',
     }
 }
 

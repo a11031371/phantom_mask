@@ -10,11 +10,11 @@
 services:
   server:
     build:
-      context: ./phantom_mask_api_server
+      context: .
     ports:
       - 8000:8000
     volumes:
-      - ./phantom_mask_api_server:/app 
+      - ./db:/app/db
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

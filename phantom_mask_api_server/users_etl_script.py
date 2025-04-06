@@ -41,11 +41,6 @@ def insert_data():
         # get user ID
         user_id = cursor.execute("""SELECT id FROM users WHERE name = ?""", (user["name"],)).fetchone()[0]
 
-        #  "pharmacyName": "Keystone Pharmacy",
-        # "maskName": "True Barrier (green) (3 per pack)",
-        # "transactionAmount": 12.35,
-        # "transactionDate": "2021-01-04 15:18:51"
-
         # insert transaction data
         for transaction in user["purchaseHistories"]:
             model, color, num_per_pack = parse_mask_name(transaction["maskName"])

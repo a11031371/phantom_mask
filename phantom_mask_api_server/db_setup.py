@@ -4,6 +4,15 @@ import sqlite3
 conn = sqlite3.connect("phantom_mask_db.db")
 cursor = conn.cursor()
 
+
+# cursor.executescript("""
+# # DROP TABLE IF EXISTS pharmacy_masks;
+# # DROP TABLE IF EXISTS transactions;
+# # DROP TABLE IF EXISTS masks;
+# # DROP TABLE IF EXISTS pharmacies;
+# # DROP TABLE IF EXISTS users;
+# # """)
+
 # create tables (users, pharmacies, masks, transactions, pharmacy_masks)
 cursor.executescript("""
 CREATE TABLE IF NOT EXISTS users (
