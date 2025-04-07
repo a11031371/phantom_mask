@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-%sv@98n$i*4o0r622ce-p4-rla=ee@jx8ce0yw0$jes=dp7vlw
 DEBUG = False
 
 # allowed hosts in production
-ALLOWED_HOSTS = ['localhost', 'phantom-mask-production-b908.up.railway.app', '0.0.0.0', ]
+ALLOWED_HOSTS = ['localhost', 'phantom-mask-production-b908.up.railway.app', '0.0.0.0', '127.0.0.1']
 # ALLOWED_HOSTS = ['*']
 
 # security settings

@@ -14,6 +14,18 @@ from .utils.StringRelevance import StringRelevance as sr
 from .services.PharmacyQueryService import PharmacyQueryService
 from .services.UserQueryService import UserQueryService
 
+class APIRootView(views.APIView):
+    """ API root view. """
+
+    def get(self, request):
+        """
+        Returns a welcome message.
+        """
+        data = {
+            "message": "Welcome to the Phantom Mask API.",
+        }
+        return Response(data)
+
 class PharmacyOpenListView(generics.ListAPIView):
     """ List all pharmacies that are open at a given time on a given day. """
 
