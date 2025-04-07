@@ -5,11 +5,11 @@ import re
 """ ETL script to extract, transform and load pharmacy data from JSON file into SQLite database """
 
 # read json data
-with open("./data/pharmacies.json", "r", encoding="utf-8") as f:
+with open("../data/pharmacies.json", "r", encoding="utf-8") as f:
     pharmacies_data = json.load(f)
 
 # SQLite connection
-conn = sqlite3.connect("./db/phantom_mask_db.db")
+conn = sqlite3.connect("../db/phantom_mask_db.db")
 cursor = conn.cursor()
 
 def parse_opening_hours(opening_hours):
@@ -112,9 +112,10 @@ def insert_pharmacy_masks_data():
                 INSERT INTO pharmacy_masks (mask_id, pharmacy_id, price)
                 VALUES (?, ?, ?) """, (mask_id, pharmacy_id, price)
             )
-# insert_pharmacy_data()
+            
+insert_pharmacy_data()
 insert_masks_data()
-# insert_pharmacy_masks_data()
+insert_pharmacy_masks_data()
 conn.commit()
 conn.close()
 

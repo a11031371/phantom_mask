@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 # Create a folder for the database if it doesn't exist
-folder_name = "./db"
+folder_name = "../db"
 if not os.path.exists(folder_name):
     os.makedirs(folder_name)
 
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS pharmacies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
     cash_balance REAL NOT NULL,
     mon_open TEXT, mon_close TEXT,
     tue_open TEXT, tue_close TEXT,

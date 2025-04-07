@@ -41,9 +41,16 @@ class PharmacyMasks(models.Model):
         managed = False
         db_table = 'pharmacy_masks'
 
+class Users(models.Model):
+    name = models.TextField()
+    cash_balance = models.FloatField()
 
+    class Meta:
+        managed = False
+        db_table = 'users'
+        
 class Transactions(models.Model):
-    user = models.ForeignKey('Users', related_name="transactions", on_delete=models.PROTECT)
+    user = models.ForeignKey(Users, related_name="transactions", on_delete=models.PROTECT)
     pharmacy = models.ForeignKey(Pharmacies, related_name="transactions", on_delete=models.PROTECT)
     mask = models.ForeignKey(Masks, related_name="transactions", on_delete=models.PROTECT)
     transaction_amount = models.FloatField()
@@ -52,12 +59,3 @@ class Transactions(models.Model):
     class Meta:
         managed = False
         db_table = 'transactions'
-
-
-class Users(models.Model):
-    name = models.TextField()
-    cash_balance = models.FloatField()
-
-    class Meta:
-        managed = False
-        db_table = 'users'
