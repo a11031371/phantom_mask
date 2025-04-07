@@ -91,7 +91,7 @@ if os.environ.get('ENV') == 'production':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join('/mnt/db', 'phantom_mask_db.db'),  # persistent storage path
+            'NAME': os.path.join('/app/db', 'phantom_mask_db.db'),  # persistent storage path
         }
     }
 else:
