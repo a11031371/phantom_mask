@@ -27,8 +27,15 @@ SECRET_KEY = 'django-insecure-%sv@98n$i*4o0r622ce-p4-rla=ee@jx8ce0yw0$jes=dp7vlw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+# allowed hosts in production
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'phantom-mask-production-b908.up.railway.app']\
 
+# security settings
+if os.environ.get('ENV') == 'production':
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Application definition
 
