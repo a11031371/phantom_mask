@@ -4,12 +4,21 @@ import re
 
 """ ETL script to extract, transform and load pharmacy data from JSON file into SQLite database """
 
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "phantom_mask_api_server.settings")
+django.setup()
+
+# 然後寫你的 ETL 程式碼
+from phantom_mask.models import Pharmacy, Mask
+
 # read json data
 with open("data/pharmacies.json", "r", encoding="utf-8") as f:
     pharmacies_data = json.load(f)
 
 # SQLite connection
-conn = sqlite3.connect("../db/phantom_mask_db.db")
+conn = sqlite3.connect("db/phantom_mask_db.db")
 cursor = conn.cursor()
 
 def parse_opening_hours(opening_hours):

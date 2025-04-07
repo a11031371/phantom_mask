@@ -10,7 +10,7 @@ with open("data/users.json", "r", encoding="utf-8") as f:
     users_data = json.load(f)
 
 # SQLite connection
-conn = sqlite3.connect("../db/phantom_mask_db.db")
+conn = sqlite3.connect("db/phantom_mask_db.db")
 cursor = conn.cursor()
 
 def parse_mask_name(mask_name):
