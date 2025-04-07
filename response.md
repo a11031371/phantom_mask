@@ -61,8 +61,15 @@
   - Tested and documented.
   - Simply delete a record. The API needs to be refactored in a more robust way for production.
   
-- [x] Refactor the APIs:
+- [x] Refactor the APIs.
 - Design concept: There are several queries. The query logic for pharmacies and users is abstracted into the `PharmacyQueryService` and `UserQueryService` modules, respectively, separating it from the view layer. Logic related to masks, due to their dependency on pharmacies, is also handled within the `PharmacyQueryService`. The abstraction simplifies views, enhances maintainability, and makes it easier to extend or reuse query conditions in the future.
+
+- [x] Deploy the app.
+- Key considerations focused on: ensuring `data persistence` and maintaining `environment consistency` by applying the same configuration as docker-compose.yaml for both production and debug setups. The approach simplifies deployment across different environments.
+
+    - Deployed on the Railway platform.
+    - The database is dynamically built through the execution of ETL scripts and mounted into the app container.
+    - Security settings are configured for production.
   
 ### A.2. API Document
 Please go [here](https://hackmd.io/@LLH/Bk9rZVFaJg) to refer to the API documentation.
@@ -98,13 +105,15 @@ $ docker-compose up -d
 
 ### B.3. Demo Site Url
 
-> todo
+CLick [here](https://phantom-mask-production-b908.up.railway.app/api/) to enter my demo site. 
 
 ## C. Other Information
 
 ### C.1. ERD
 
 [Here](https://drive.google.com/file/d/1TJGQgKH0TNSHkjXInfxpcH3f2wFDlJSp/view?usp=drive_link) is My ERD design.
+
+
 
 ### C.2. Technical Document
 

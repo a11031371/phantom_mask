@@ -37,5 +37,4 @@ urlpatterns = [
     path("swagger/", schema_view.as_view(), name="swagger-schema"),
 ]
 
-if not settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
