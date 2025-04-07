@@ -5,7 +5,7 @@ import re
 """ ETL script to extract, transform and load pharmacy data from JSON file into SQLite database """
 
 # read json data
-with open("../data/pharmacies.json", "r", encoding="utf-8") as f:
+with open("data/pharmacies.json", "r", encoding="utf-8") as f:
     pharmacies_data = json.load(f)
 
 # SQLite connection
@@ -23,6 +23,7 @@ def parse_opening_hours(opening_hours):
             A dictionary where keys are weekdays (Mon - Sun);
             and values are tuples representing (opening_time, closing_time)
     """
+
 
     # initialize return dict
     hours_dict = {
@@ -116,6 +117,7 @@ def insert_pharmacy_masks_data():
 insert_pharmacy_data()
 insert_masks_data()
 insert_pharmacy_masks_data()
+
 conn.commit()
 conn.close()
 
