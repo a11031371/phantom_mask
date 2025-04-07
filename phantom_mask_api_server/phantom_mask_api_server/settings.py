@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-%sv@98n$i*4o0r622ce-p4-rla=ee@jx8ce0yw0$jes=dp7vlw
 DEBUG = False
 
 # allowed hosts in production
-ALLOWED_HOSTS = ['localhost', 'phantom-mask-production-b908.up.railway.app', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', 'phantom-mask-production-b908.up.railway.app', '0.0.0.0', ]
 # ALLOWED_HOSTS = ['*']
 
 # security settings
@@ -140,6 +140,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
