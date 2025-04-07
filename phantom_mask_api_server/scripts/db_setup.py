@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 # Create a folder for the database if it doesn't exist
-folder_name = "../db"
+folder_name = "db"
 if not os.path.exists(folder_name):
     os.makedirs(folder_name)
 
