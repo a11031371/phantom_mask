@@ -58,13 +58,13 @@ def insert_data():
             else:
                 mask_id = mask_result[0]
 
-            transaction_date = datetime.strptime(transaction["transactionDate"], "%Y-%m-%d %H:%M:%S")
+            # transaction_date = datetime.strptime(transaction["transactionDate"], "%Y-%m-%d %H:%M:%S")
 
             # insert transaction
             cursor.execute("""
                 INSERT INTO transactions (user_id, pharmacy_id, mask_id, transaction_amount, transaction_date)
                 VALUES (?, ?, ?, ?, ?)
-            """, (user_id, pharmacy_id, mask_id, transaction["transactionAmount"], transaction_date))
+            """, (user_id, pharmacy_id, mask_id, transaction["transactionAmount"], transaction["transactionDate"]))
 
 insert_data()
 conn.commit()
