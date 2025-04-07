@@ -66,7 +66,6 @@ CREATE TABLE IF NOT EXISTS pharmacy_masks (
     mask_id INTEGER NOT NULL,
     pharmacy_id INTEGER NOT NULL,
     price REAL NOT NULL,
-    UNIQUE (mask_id, pharmacy_id),
     FOREIGN KEY (mask_id) REFERENCES masks(id),
     FOREIGN KEY (pharmacy_id) REFERENCES pharmacies(id)
 );
