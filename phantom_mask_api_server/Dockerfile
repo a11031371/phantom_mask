@@ -34,8 +34,6 @@ RUN adduser \
 COPY requirements.txt /app/requirements.txt
 RUN python -m pip install -r /app/requirements.txt
 
-USER root
-
 # Switch to the non-privileged user to run the application.
 USER appuser
 
